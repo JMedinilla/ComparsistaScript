@@ -8,10 +8,10 @@ Si alguien quiere cogerlo y mejorarlo, arreglar fallos, o en definitiva, dedicar
 
 ### Requisitos
 
-1. Tener Windows, porque se usa un **.exe**
-2. Instalar **python** (3)
-3. Instalar **pip**
-4. Ejecutar **python -m pip install pytube==6.4.2** en la consola para instalar **pytube**
+1.  Tener Windows, porque se usa un **.exe**
+2.  Instalar **python** (3)
+3.  Instalar **pip**
+4.  Ejecutar **python -m pip install pytube==6.4.2** en la consola para instalar **pytube**
 
 ### Descripción
 
@@ -28,21 +28,6 @@ El script utiliza la herramienta FFmpeg, una colección de software libre para l
 Más información acerca de FFmpeg: <https://es.wikipedia.org/wiki/FFmpeg>
 Web oficial del proyecto: <http://ffmpeg.org/>
 
-### Errores conocidos y cosas a tener en cuenta al usar el script, así como cosas que me dan igual (de forma definitiva, o que serán pulidas en el futuro, idk)
+### Errores conocidos y cosas a tener en cuenta al usar el script u otras cosas que probablemente no me importen
 
-1.  No hay ninguna excepción controlada, de forma que la ejecución terminará si ocurre algún error, los cuales tampoco sé cómo de frecuentes son, ni cuáles realmente, pero sé que a mí no me van a dar por eso de saber qué poner y tal. Suerte con lo tuyo.
-
-
-    .''.    .'',
-    |  |   /  /
-    |  |  /  /
-    |  | /  /
-    |  |/  ;-._
-    }  ` _/  / ;
-    |  /` ) /  /
-    | /  /_/\_/\
-    |/  /      |
-    (  ' \ '-  |
-     \    `.  /
-      |      |
-      |      |
+1.  No hay control de excepciones (aunque no te deberían dar si sigues las instrucciones)

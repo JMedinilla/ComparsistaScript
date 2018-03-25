@@ -37,29 +37,27 @@ def startDownloadArt():
 
 
 def getTimestampsArt():
-    print("                                   ,   /\   ,                                    ")
-    print("                                  / '-'  '-' \                                   ")
-    print("                                  |  GUARDIA |                                   ")
-    print("                                  |   CIVIL  |                                   ")
-    print("                                  |   .--.   |                                   ")
-    print("                                  |  ( 42 )  |                                   ")
-    print("                                  \   '--'   /                                   ")
-    print("                                   '--.  .--'                                    ")
-    print("                                       \/                                        ")
-    print("===================================== AVISO =====================================")
-    print("|| La 'veracidad' de las marcas NO serán comprobadas. Es decir, que el usuario ||")
-    print("|| es último responsable, y único, de introducirlas en el orden correcto       ||")
-    print("||                                                                             ||")
-    print("|| En NINGÚN momento se realizará ningún tipo de comprobación para saber si la ||")
-    print("|| última marca introducida es menor que otra anterior y problemas similares.  ||")
-    print("||                                                                             ||")
-    print("|| Esta advertencia aplica también a la duración total del vídeo               ||")
-    print("===================================== AVISO =====================================\n")
+    print("                    ,   /\   ,                    ")
+    print("                   / '-'  '-' \                   ")
+    print("                   |  GUARDIA |                   ")
+    print("                   |   CIVIL  |                   ")
+    print("                   |   .--.   |                   ")
+    print("                   |  ( 42 )  |                   ")
+    print("                   \   '--'   /                   ")
+    print("                    '--.  .--'                    ")
+    print("                        \/                        ")
+    print("===================== AVISO ======================")
+    print("||                                              ||")
+    print("||   Duración MÍNIMA para descargar: 00:02:00   ||")
+    print("||                                              ||")
+    print("||   Duración MÁXIMA para descargar: 02:59:59   ||")
+    print("||                                              ||")
+    print("===================== AVISO ======================\n")
 
 
 def evaluateInput(input):
     validInput = False
-    itemMatchsHour = re.match("^[0-9]{2}:[0-9]{2}:[0-9]{2}$", input, 0)
+    itemMatchsHour = re.match("^0[0-2]:[0-5][0-9]:[0-5][0-9]$", input, 0)
     if itemMatchsHour:
         validInput = True
     return validInput
@@ -89,8 +87,11 @@ def getAllAudios(dir):
     print("...y ya está, máquina")
     fullList = os.listdir(dir)
     for file in fullList:
-        os.rename(str(dir + "/" + file),
-                  str(dir + "/" + file.replace("_", " ")))
+        if ".mp4" in file:
+            os.remove(dir + "/" + file)
+        else:
+            os.rename(str(dir + "/" + file),
+                      str(dir + "/" + file.replace("_", " ")))
 
 
 def clearDir(dir):
@@ -158,7 +159,8 @@ def startDownload(url, dir):
         if ".mp4" in str(o):
             condition = False
         else:
-            print("\n¯\_(•_•)_/¯ Esa opción no es .mp4, amigo, tal vez te has equivocado, inténtalo otra vez ¯\_(•_•)_/¯")
+            print(
+                "\n¯\_(•_•)_/¯ Esa opción no es .mp4, tal vez te has equivocado, inténtalo otra vez")
     vid = options[num_input]
     print("Vamos a ello... por favor, espera")
     vid.download(dir)
@@ -194,7 +196,7 @@ def getTimestampNames(dir):
         print("\nUn momento... ¿Cómo que un solo nombre?")
         print("Eso es que no has puesto marcas de tiempo.")
         print("\nLo siento, pero no voy a descargar el vídeo como tal, en una sola parte.")
-        print("Para eso ya hay miles de opciones, máquina. (⌐■_■)")
+        print("Para eso ya hay miles de opciones, máquina. (⌐■_■)\n\n")
         return 0
     namesFile.close()
     return 1
@@ -207,29 +209,58 @@ def getTimestamps(dir):
     timestampsFileAux = open(fa, "w")
     timestampsFileAux.write("00:00:00\n")
     getTimestampsArt()
+    end = False
+    exitDuration = True
     exitLoop = True
-    while(exitLoop):
-        inputValue = input(
-            "Marca de tiempo en formato 'hh:mm:ss' // 'x' para salir: ")
-        if inputValue == "x":
-            exitLoop = False
-            exitDuration = True
-            while(exitDuration):
-                duration = input("\nDuración total en formato 'hh:mm:ss': ")
-                if evaluateInput(duration):
-                    timestampsFileAux.write(duration)
-                    exitDuration = False
+    last = "00:00:00"
+    while(exitDuration):
+        duration = input(
+            "\nIntroduce la duración total del vídeo en formato 'hh:mm:ss': ")
+        print("")
+        if evaluateInput(duration):
+            exitDuration = False
+            if duration < "00:02:00":
+                end = True
+                print(
+                    "No me voy a molestar en cortar un vídeo que no llega a 2 minutos\n")
+            if duration >= "03:00:00":
+                end = True
+                print(
+                    "Demasiado grande illo, que no llegue las 3 horas\n")
+        else:
+            print("Formato inválido, asegúrate de cumplir este: 'hh:mm:ss'\n")
+    if end:
+        timestampsFile.close()
+        timestampsFileAux.close()
+        return 0
+    else:
+        while(exitLoop):
+            inputValue = input(
+                "Marca de tiempo en formato 'hh:mm:ss' // 'x' para salir: ")
+            if inputValue == "x":
+                exitLoop = False
+            else:
+                if evaluateInput(inputValue):
+                    if inputValue >= duration:
+                        print(
+                            "No puedes introducir una marca por encima o que coincida con el final del vídeo\n")
+                    else:
+                        if inputValue < last:
+                            print(
+                                "La última marca es mayor que la que has introducido\n")
+                        if inputValue == last:
+                            print("Esa marca ya la has introducido\n")
+                        if inputValue > last:
+                            last = inputValue
+                            timestampsFile.write(inputValue + "\n")
+                            timestampsFileAux.write(inputValue + "\n")
+                            print("Marca '" + inputValue + "' introducida")
                 else:
                     print("Formato inválido, asegúrate de cumplir este: 'hh:mm:ss'\n")
-        else:
-            if evaluateInput(inputValue):
-                timestampsFile.write(inputValue + "\n")
-                timestampsFileAux.write(inputValue + "\n")
-                print("Marca '" + inputValue + "' introducida\n")
-            else:
-                print("Formato inválido, asegúrate de cumplir este: 'hh:mm:ss'\n")
+    timestampsFileAux.write(duration)
     timestampsFile.close()
     timestampsFileAux.close()
+    return 1
 
 
 printSeparator()
@@ -250,18 +281,19 @@ os.makedirs(dir_filename)
 print("Directorio '" + dir_filename + "' creado")
 printSeparator()
 
-getTimestamps(dir_filename)
-num = getTimestampNames(dir_filename)
-if num == 1:
-    printSeparator()
+finish = getTimestamps(dir_filename)
+if finish == 1:
+    num = getTimestampNames(dir_filename)
+    if num == 1:
+        printSeparator()
 
-    startDownload(url, dir_filename)
-    printSeparator()
+        startDownload(url, dir_filename)
+        printSeparator()
 
-    cutIntoPieces(dir_filename)
-    getParts(dir_filename)
-    clearDir(dir_filename)
+        cutIntoPieces(dir_filename)
+        getParts(dir_filename)
+        clearDir(dir_filename)
 
-    getAllAudios(dir_filename)
-    printSeparator()
-    finishArt()
+        getAllAudios(dir_filename)
+        printSeparator()
+        finishArt()
