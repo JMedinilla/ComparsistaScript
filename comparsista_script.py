@@ -271,6 +271,7 @@ dirExists = True
 while (dirExists):
     dir_filename = input("\nNombre del directorio contenedor: ")
     dir_filename = dir_filename.replace(" ", "_")
+    dir_filename = "../" + dir_filename
     if os.path.exists(dir_filename):
         print(" ¯\(°_o)/¯ Buen intento pero esa carpeta ya existe, fiera")
     else:
