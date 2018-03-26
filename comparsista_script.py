@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
+import platform
 import re
-import pytube
 import subprocess
+import pytube
 
 
 def printSeparator():
@@ -64,7 +65,10 @@ def evaluateInput(input):
 
 
 def getAllAudios(dir):
-    ffmpegdir = "ffmpeg"
+    ffcmd = "ffmpeg/ffmpeg"
+    if platform.system() == "Windows":
+        ffcmd = ffcmd + ".exe"
+
     l = os.listdir(dir)
     li = [x.split('.')[0] for x in l]
     ab = "160k"
@@ -73,16 +77,10 @@ def getAllAudios(dir):
     for file in li:
         i = dir + "/" + file + ".mp4"
         vnwav = dir + "/" + file + ".wav"
-        vnmp = dir + "/" + file + ".mp3"
-        cmdwav = [ffmpegdir + "/ffmpeg.exe", "-i", i,
+        cmdwav = [ffcmd, "-i", i,
                   "-ab", ab, "-ac", ac, "-ar", ar, "-vn", vnwav]
         FNULL = open(os.devnull, 'w')
         subprocess.run(cmdwav, stdout=FNULL, stderr=subprocess.STDOUT)
-        FNULL.close()
-        cmdmp = [ffmpegdir + "/ffmpeg.exe", "-i", i,
-                 "-ab", ab, "-ac", ac, "-ar", ar, "-vn", vnmp]
-        FNULL = open(os.devnull, 'w')
-        subprocess.run(cmdmp, stdout=FNULL, stderr=subprocess.STDOUT)
         FNULL.close()
     print("...y ya está, máquina")
     fullList = os.listdir(dir)
@@ -101,25 +99,27 @@ def clearDir(dir):
     os.remove(dir + "/cuts.txt")
     os.remove(dir + "/original.mp4")
     print("Vale, pues el corte ya estaría, ahora habría que extraer los audios.")
-    print("Se van a pasar a .wav y a .mp3, a lo mejor tarda un rato.")
 
 
 def getParts(dir):
-    ffmpegdir = "ffmpeg"
+    ffcmd = "ffmpeg/ffmpeg"
+    if platform.system() == "Windows":
+        ffcmd = ffcmd + ".exe"
+
     with open(dir + "/cuts.txt") as f:
         all = f.readlines()
         first = all[:int(len(all) / 2)]
         second = all[int(len(all) / 2):]
         for line in first:
             filename, start, end = line.strip().split(' ')
-            cmd = [ffmpegdir + "/ffmpeg.exe", "-i", dir + "/original.mp4",
+            cmd = [ffcmd, "-i", dir + "/original.mp4",
                    "-ss", start, "-to", end, "-c", "copy", filename]
             FNULL = open(os.devnull, 'w')
             subprocess.run(cmd, stdout=FNULL, stderr=subprocess.STDOUT)
             FNULL.close()
         for line in second:
             filename, start, end = line.strip().split(' ')
-            cmd = [ffmpegdir + "/ffmpeg.exe", "-i", dir + "/original.mp4",
+            cmd = [ffcmd, "-i", dir + "/original.mp4",
                    "-ss", start, "-to", end, "-c", "copy", filename]
             FNULL = open(os.devnull, 'w')
             subprocess.run(cmd, stdout=FNULL, stderr=subprocess.STDOUT)
