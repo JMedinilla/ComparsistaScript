@@ -108,21 +108,12 @@ def getParts(dir):
 
     with open(dir + "/cuts.txt") as f:
         all = f.readlines()
-        first = all[:int(len(all) / 2)]
-        second = all[int(len(all) / 2):]
-        for line in first:
+        for line in all:
             filename, start, end = line.strip().split(' ')
             cmd = [ffcmd, "-i", dir + "/original.mp4",
                    "-ss", start, "-to", end, "-c", "copy", filename]
             FNULL = open(os.devnull, 'w')
-            subprocess.run(cmd, stdout=FNULL, stderr=subprocess.STDOUT)
-            FNULL.close()
-        for line in second:
-            filename, start, end = line.strip().split(' ')
-            cmd = [ffcmd, "-i", dir + "/original.mp4",
-                   "-ss", start, "-to", end, "-c", "copy", filename]
-            FNULL = open(os.devnull, 'w')
-            subprocess.run(cmd, stdout=FNULL, stderr=subprocess.STDOUT)
+            subprocess.call(cmd, stdout=FNULL, stderr=subprocess.STDOUT)
             FNULL.close()
 
 
@@ -191,6 +182,8 @@ def getTimestampNames(dir):
             x += 1
             name = input("¿Nombre del fragmento?: ")
             name = name.replace(" ", "_")
+            if name == "":
+                name = "tmp_" + str(x)
             namesFile.write(name + ".mp4" + "\n")
     else:
         print("\nUn momento... ¿Cómo que un solo nombre?")
