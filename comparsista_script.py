@@ -77,10 +77,10 @@ def getAllAudios(dir):
     for file in li:
         i = dir + "/" + file + ".mp4"
         vnwav = dir + "/" + file + ".wav"
-        cmdwav = [ffcmd, "-i", i,
-                  "-ab", ab, "-ac", ac, "-ar", ar, "-vn", vnwav]
+        cmdwav = [ffcmd, "-i", i, "-ab", ab,
+                  "-ac", ac, "-ar", ar, "-vn", vnwav]
         FNULL = open(os.devnull, 'w')
-        subprocess.run(cmdwav, stdout=FNULL, stderr=subprocess.STDOUT)
+        subprocess.call(cmdwav, stdout=FNULL, stderr=subprocess.STDOUT)
         FNULL.close()
     print("...y ya está, máquina")
     fullList = os.listdir(dir)
